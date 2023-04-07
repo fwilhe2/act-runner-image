@@ -1,0 +1,22 @@
+name: Build and push image
+
+on:
+  push:
+
+jobs:
+  build-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Available platforms
+        run: echo ${{ steps.buildx.outputs.platforms }}
+      - name: Log into DockerHub
+        run: echo "${{ secrets.DH_PAT }}" | docker login -u fwilhe2 --password-stdin
+      - name: Build and push
+        run: docker buildx build --platform=linux/amd64,linux/arm64 --push --tag=fwilhe2/act-runner .
