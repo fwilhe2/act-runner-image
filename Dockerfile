@@ -19,7 +19,7 @@ RUN  apt-get update -yqq && apt-get install -yqq jq wget curl unzip lsb-release 
     && apt-get install -yqq $(jq -r '.apt.cmd_packages | join(" ")' toolset-2204.json) \
     && bash installers/git.sh \
     && bash installers/github-cli.sh \
-    # && bash installers/nodejs.sh \
+    && bash installers/nodejs.sh \
     # && bash installers/python.sh \
     # && bash installers/java-tools.sh \
     && chmod -R 777 /opt \

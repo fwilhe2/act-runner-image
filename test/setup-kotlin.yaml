@@ -1,0 +1,68 @@
+name: CI
+on:
+  push:
+  workflow_dispatch:
+  schedule:
+    - cron: "1 1 * * 1"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3.3.0
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      # - uses: fwilhe2/setup-kotlin@main
+      #   with:
+      #     install-native: true
+      # - run: kotlinc foo.kt -include-runtime -d hello.jar; java -jar hello.jar
+
+      # - run: kotlinc-native foo.kt
+      # - run: ./program.kexe
+      # - run: kotlin foo.main.kts
+
+      - uses: fwilhe2/setup-kotlin@main
+        name: Do stuff with Kotlin scripting
+        with:
+          script: |
+            #!/usr/bin/env kotlin
+
+            fun exportVariable(name: String, value: String) = java.io.File(System.getenv("GITHUB_ENV")).appendText("${name}=${value}\n")
+
+            fun withGroup(name: String, fn: () -> Unit) {
+                println("::group::${name}")
+                fn()
+                println("::endgroup::")
+            }
+
+            fun getInput(name: String): String {
+                return System.getenv("INPUT_${name.replace(" ", "_").toUpperCase()}")
+            }
+
+            withGroup("debug"){
+              println(System.getenv("GITHUB_ENV"))
+            }
+
+            println("abc")
+
+            println("Using Kotlin " + getInput("version"))
+
+            exportVariable("action_state", "yellow")
+            exportVariable("abc", "xyz")
+            exportVariable("myvar", "asasdfsdf")
+      - run: echo $action_state
+        shell: bash
+      - run: echo $abc
+        shell: bash
+      - run: echo $myvar
+        shell: bash
+      - uses: fwilhe2/setup-kotlin@main
+        name: Read variable with Kotlin scripting
+        with:
+          script: |
+            #!/usr/bin/env kotlin
+            println(System.getenv("myvar"))
+            if (System.getenv("myvar") != "asasdfsdf") {
+              throw RuntimeException("could not get env var")
+            }
