@@ -129,7 +129,6 @@
             "imagemagick",
             "iproute2",
             "iputils-ping",
-            "lib32z1",
             "libc++abi-dev",
             "libc++-dev",
             "libcurl4",
