@@ -2,6 +2,9 @@ name: Build and push image
 
 on:
   push:
+  workflow_dispatch:
+  schedule:
+    - cron: 0 0 * * 1
 
 jobs:
   build-push:
