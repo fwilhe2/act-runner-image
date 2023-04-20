@@ -14,18 +14,26 @@ jobs:
       - uses: actions/checkout@v3
       - run: curl -s https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash
       - run: ./test.sh
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-      - name: Set up Docker Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@v2
-      - name: Available platforms
-        run: echo ${{ steps.buildx.outputs.platforms }}
-      - name: Log into DockerHub
-        run: echo "${{ secrets.DH_PAT }}" | docker login -u fwilhe2 --password-stdin
-      - name: Build and push
-        run: docker buildx build --platform=linux/amd64,linux/arm64 --push --tag=fwilhe2/act-runner .
+      # - name: Set up QEMU
+      #   uses: docker/setup-qemu-action@v2
+      # - name: Set up Docker Buildx
+      #   id: buildx
+      #   uses: docker/setup-buildx-action@v2
+      # - name: Available platforms
+      #   run: echo ${{ steps.buildx.outputs.platforms }}
+      # - name: Log into DockerHub
+      #   run: echo "${{ secrets.DH_PAT }}" | docker login -u fwilhe2 --password-stdin
+      # - name: Build and push
+      #   run: docker buildx build --platform=linux/amd64,linux/arm64 --push --tag=fwilhe2/act-runner .
       - name: Generate SBOM
         run: |
           curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
-          syft fwilhe2/act-runner
+          syft act-runner-image:test -o json=sbom.syft.json -o spdx-json=sbom.spdx.json -o github=sbom.github.json -o text sbom.txt
+      - uses: actions/upload-artifact@v3
+        with:
+          name: sbom
+          path: sbom.*
+      - name: SBOM upload 
+        uses: advanced-security/spdx-dependency-submission-action@v0.0.1
+        with:
+          filePath: "sbom.spdx.json"
