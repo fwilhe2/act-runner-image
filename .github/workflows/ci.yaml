@@ -37,3 +37,4 @@ jobs:
         uses: advanced-security/spdx-dependency-submission-action@v0.0.1
         with:
           filePath: "sbom.spdx.json"
+          token: ${{ secrets.GH_PAT }}
