@@ -23,7 +23,7 @@ jobs:
       - name: Generate SBOM
         run: |
           curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
-          syft act-runner-image:test -o json=sbom.syft.json -o spdx-json=sbom.spdx.json -o github=sbom.github.json -o text=sbom.txt
+          syft act-runner-image:test -o json=sbom.syft.json -o spdx-json=sbom.spdx.json -o github=sbom.github.json -o text=sbom.txt -o table=sbom.table.txt
 
       - uses: actions/upload-artifact@v3
         with:
@@ -36,3 +36,4 @@ jobs:
           filePath: "sbom.spdx.json"
 
       - run: cat sbom.txt
+      - run: cat sbom.table.txt
