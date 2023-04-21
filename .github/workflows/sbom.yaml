@@ -1,0 +1,38 @@
+name: SBOM upload
+
+on:
+  workflow_dispatch:
+  push: 
+    branches: ["main"]
+  schedule:
+    - cron: 0 0 * * 1
+
+jobs:
+  SBOM-upload:
+
+    runs-on: ubuntu-latest
+    permissions: 
+      id-token: write
+      contents: write
+      
+    steps:
+      - uses: actions/checkout@v3
+
+      - run: docker build -t act-runner-image:test .
+
+      - name: Generate SBOM
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
+          syft act-runner-image:test -o json=sbom.syft.json -o spdx-json=sbom.spdx.json -o github=sbom.github.json -o text=sbom.txt
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: sbom
+          path: "sbom.spdx.json"
+
+      - name: SBOM upload 
+        uses: advanced-security/spdx-dependency-submission-action@v0.0.1
+        with:
+          filePath: "sbom.spdx.json"
+
+      - run: cat sbom.txt
