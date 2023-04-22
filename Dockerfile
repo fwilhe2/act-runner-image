@@ -8,7 +8,7 @@ ENV AGENT_TOOLSDIRECTORY=/opt/hostedtoolcache/
 COPY ./vendor/scripts .
 COPY ./vendor/toolsets .
 
-RUN  apt-get update -yqq && apt-get install -yqq jq wget curl unzip lsb-release sudo lbzip2 \
+RUN  apt-get update -yqq && apt-get install -yqq jq wget curl unzip lsb-release sudo lbzip2 zstd \
     && echo 'echo $@' > /usr/bin/invoke_tests \
     && chmod +x /usr/bin/invoke_tests \
     && echo 'echo "$(jq -r "$query" toolset-2204.json)"' > /usr/bin/get_toolset_value \
