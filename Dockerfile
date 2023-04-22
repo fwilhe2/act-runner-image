@@ -35,5 +35,3 @@ RUN  apt-get update -yqq && apt-get install -yqq jq wget curl unzip lsb-release 
 USER runner
 
 WORKDIR /home/runner
-
-RUN ls -la /opt/hostedtoolcache
