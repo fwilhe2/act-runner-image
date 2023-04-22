@@ -2,6 +2,7 @@ FROM ubuntu:22.04
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV HELPER_SCRIPTS=./helpers
+ENV INSTALLER_SCRIPT_FOLDER=/imagegeneration/installers/
 
 COPY ./vendor/scripts .
 COPY ./vendor/toolsets .
