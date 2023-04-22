@@ -2,6 +2,12 @@
 
 VARIANT=$1
 
+if [ "$VARIANT" = "base" ]; then
+    docker build -t act-runner-image:test-$VARIANT .
+else
+    docker build --file=Dockerfile.$VARIANT -t act-runner-image:test-$VARIANT .
+fi
+
 docker build --file=Dockerfile.$VARIANT -t act-runner-image:test-$VARIANT .
 
 ./bin/act --platform ubuntu-latest=act-runner-image:test-$VARIANT --workflows test/setup-kotlin.yaml --pull=false
