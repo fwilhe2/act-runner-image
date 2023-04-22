@@ -8,12 +8,15 @@ on:
 
 jobs:
   build-push:
+    strategy:
+      matrix:
+        variant: [base, jvm]
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v3
       - run: curl -s https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash
-      - run: ./test.sh
+      - run: ./test.sh ${{ matrix.variant }}
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
@@ -23,5 +26,9 @@ jobs:
         run: echo ${{ steps.buildx.outputs.platforms }}
       - name: Log into DockerHub
         run: echo "${{ secrets.DH_PAT }}" | docker login -u fwilhe2 --password-stdin
-      - name: Build and push
-        run: docker buildx build --platform=linux/amd64,linux/arm64 --push --tag=fwilhe2/act-runner .
+      - name: Build and push (base)
+        if: ${{ matrix.variant == 'base' }}
+        run: docker buildx build --file=Dockerfile --platform=linux/amd64,linux/arm64 --push --tag=fwilhe2/act-runner:latest .
+      - name: Build and push (${{ matrix.variant }})
+        if: ${{ matrix.variant != 'base' }}
+        run: docker buildx build --file=Dockerfile.${{ matrix.variant }} --platform=linux/amd64,linux/arm64 --push --tag=fwilhe2/act-runner:latest-${{ matrix.variant }} .

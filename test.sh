@@ -1,8 +1,16 @@
 #!/bin/bash
 
-docker build -t act-runner-image:test .
+VARIANT=$1
 
-./bin/act --platform ubuntu-latest=act-runner-image:test --workflows test/setup-kotlin.yaml --pull=false
-./bin/act --platform ubuntu-latest=act-runner-image:test --workflows test/setup-java.yaml --pull=false
-./bin/act --platform ubuntu-latest=act-runner-image:test --workflows test/setup-go.yaml --pull=false
-./bin/act --platform ubuntu-latest=act-runner-image:test --workflows test/setup-python.yaml --pull=false
+if [ "$VARIANT" = "base" ]; then
+    docker build -t act-runner-image:test-$VARIANT .
+else
+    docker build --file=Dockerfile.$VARIANT -t act-runner-image:test-$VARIANT .
+fi
+
+docker build --file=Dockerfile.$VARIANT -t act-runner-image:test-$VARIANT .
+
+./bin/act --platform ubuntu-latest=act-runner-image:test-$VARIANT --workflows test/setup-kotlin.yaml --pull=false
+./bin/act --platform ubuntu-latest=act-runner-image:test-$VARIANT --workflows test/setup-java.yaml --pull=false
+./bin/act --platform ubuntu-latest=act-runner-image:test-$VARIANT --workflows test/setup-go.yaml --pull=false
+./bin/act --platform ubuntu-latest=act-runner-image:test-$VARIANT --workflows test/setup-python.yaml --pull=false
