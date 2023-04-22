@@ -15,6 +15,13 @@ RUN  apt-get update -yqq && apt-get install -yqq jq wget curl unzip lsb-release 
     && cp toolset-2204.json /imagegeneration/installers/toolset.json \
     && bash base/repos.sh \
     && bash installers/configure-environment.sh \
+    # pwsh
+    && apt-get install -y wget apt-transport-https software-properties-common \
+    && wget -q "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb" \
+    && dpkg -i packages-microsoft-prod.deb \
+    && rm packages-microsoft-prod.deb \
+    && apt-get update \
+    && apt-get install -y powershell \
     && apt-get install -yqq $(jq -r '.apt.common_packages | join(" ")' toolset-2204.json) \
     && apt-get install -yqq $(jq -r '.apt.cmd_packages | join(" ")' toolset-2204.json) \
     && bash installers/git.sh \
@@ -24,6 +31,7 @@ RUN  apt-get update -yqq && apt-get install -yqq jq wget curl unzip lsb-release 
     && chmod -R 777 /opt \
     && chmod -R 777 /usr/share \
     && mkdir -p /home/runner \
+    && pwsh installers/Install-Toolset.ps1 \
     && echo "runner:x:1000:1000:runner:/home/runner:/bin/bash" >> /etc/passwd \
     && echo "runner:x:1000:" >> /etc/group \
     && echo "runner::::::::" >> /etc/shadow \
@@ -34,3 +42,5 @@ RUN  apt-get update -yqq && apt-get install -yqq jq wget curl unzip lsb-release 
 USER runner
 
 WORKDIR /home/runner
+
+RUN ls -la /opt/hostedtoolcache
