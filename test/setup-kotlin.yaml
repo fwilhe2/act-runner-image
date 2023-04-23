@@ -9,6 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3.3.0
+      - name: Image Inspect Before
+        uses: fwilhe2/act-runner-image-inspect@main
       - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
@@ -66,3 +68,5 @@ jobs:
             if (System.getenv("myvar") != "asasdfsdf") {
               throw RuntimeException("could not get env var")
             }
+      - name: Image Inspect After
+        uses: fwilhe2/act-runner-image-inspect@main

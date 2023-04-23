@@ -22,6 +22,7 @@ RUN  apt-get update -yqq && apt-get install -yqq jq wget curl unzip lsb-release 
     && bash installers/git.sh \
     && bash installers/github-cli.sh \
     && bash installers/nodejs.sh \
+    #%%TOOL_SCRIPTS%%
     && chmod -R 777 /opt \
     && chmod -R 777 /usr/share \
     && mkdir -p /home/runner \

@@ -6,7 +6,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+    - name: Image Inspect Before
+      uses: fwilhe2/act-runner-image-inspect@main
     - uses: actions/setup-go@v4
       with:
         go-version: '>=1.17.0'
     - run: go version
+    - name: Image Inspect After
+      uses: fwilhe2/act-runner-image-inspect@main
