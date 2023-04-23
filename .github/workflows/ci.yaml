@@ -38,8 +38,14 @@ jobs:
       - name: Image size (base)
         if: ${{ matrix.variant == 'base' }}
         run: |
+          sleep 30
+          docker pull fwilhe2/act-runner:latest
+          sleep 10
           docker inspect -f "{{ .Size }}"  fwilhe2/act-runner:latest | numfmt --to iec --format "%8.4f"
       - name: Image size (${{ matrix.variant }})
         if: ${{ matrix.variant != 'base' }}
         run: |
+          sleep 30
+          docker pull fwilhe2/act-runner:latest-${{ matrix.variant }}
+          sleep 10
           docker inspect -f "{{ .Size }}"  fwilhe2/act-runner:latest-${{ matrix.variant }} | numfmt --to iec --format "%8.4f"
