@@ -16,6 +16,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+      - run: bash generate-variants.sh
       - run: curl -s https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash
       - run: ./test.sh ${{ matrix.variant }}
       - name: Set up QEMU
@@ -38,14 +39,10 @@ jobs:
       - name: Image size (base)
         if: ${{ matrix.variant == 'base' }}
         run: |
-          sleep 30
-          docker pull fwilhe2/act-runner:latest
-          sleep 10
-          docker inspect -f "{{ .Size }}"  fwilhe2/act-runner:latest | numfmt --to iec --format "%8.4f"
+          docker pull fwilhe2/act-runner:latest &> /dev/null
+          docker inspect -f "{{ .Size }}" fwilhe2/act-runner:latest | numfmt --to iec --format "%8.4f"
       - name: Image size (${{ matrix.variant }})
         if: ${{ matrix.variant != 'base' }}
         run: |
-          sleep 30
-          docker pull fwilhe2/act-runner:latest-${{ matrix.variant }}
-          sleep 10
-          docker inspect -f "{{ .Size }}"  fwilhe2/act-runner:latest-${{ matrix.variant }} | numfmt --to iec --format "%8.4f"
+          docker pull fwilhe2/act-runner:latest-${{ matrix.variant }} &> /dev/null
+          docker inspect -f "{{ .Size }}" fwilhe2/act-runner:latest-${{ matrix.variant }} | numfmt --to iec --format "%8.4f"
