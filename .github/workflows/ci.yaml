@@ -9,6 +9,7 @@ on:
 jobs:
   build-push:
     strategy:
+      fail-fast: false
       matrix:
         variant: [base, jvm, gcc, clang, rust]
     runs-on: ubuntu-latest
@@ -37,10 +38,8 @@ jobs:
       - name: Image size (base)
         if: ${{ matrix.variant == 'base' }}
         run: |
-          BYTES=$(docker inspect -f "{{ .Size }}"  fwilhe2/act-runner:latest)
-          numfmt --to iec --format "%8.4f" $BYTES
+          docker inspect -f "{{ .Size }}"  fwilhe2/act-runner:latest | numfmt --to iec --format "%8.4f"
       - name: Image size (${{ matrix.variant }})
         if: ${{ matrix.variant != 'base' }}
         run: |
-          BYTES=$(docker inspect -f "{{ .Size }}"  fwilhe2/act-runner:latest-${{ matrix.variant }})
-          numfmt --to iec --format "%8.4f" $BYTES
+          docker inspect -f "{{ .Size }}"  fwilhe2/act-runner:latest-${{ matrix.variant }} | numfmt --to iec --format "%8.4f"
