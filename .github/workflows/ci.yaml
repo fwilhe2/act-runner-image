@@ -10,7 +10,7 @@ jobs:
   build-push:
     strategy:
       matrix:
-        variant: [base, jvm]
+        variant: [base, jvm, gcc, clang, rust]
     runs-on: ubuntu-latest
 
     steps:
