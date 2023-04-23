@@ -8,6 +8,9 @@ on:
 
 jobs:
   build-push:
+    concurrency:
+      group: ${{ github.ref }}
+      cancel-in-progress: true
     strategy:
       fail-fast: false
       matrix:
