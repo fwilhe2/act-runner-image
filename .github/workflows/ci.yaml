@@ -26,9 +26,21 @@ jobs:
         run: echo ${{ steps.buildx.outputs.platforms }}
       - name: Log into DockerHub
         run: echo "${{ secrets.DH_PAT }}" | docker login -u fwilhe2 --password-stdin
+
       - name: Build and push (base)
         if: ${{ matrix.variant == 'base' }}
         run: docker buildx build --file=Dockerfile --platform=linux/amd64,linux/arm64 --push --tag=fwilhe2/act-runner:latest .
       - name: Build and push (${{ matrix.variant }})
         if: ${{ matrix.variant != 'base' }}
         run: docker buildx build --file=Dockerfile.${{ matrix.variant }} --platform=linux/amd64,linux/arm64 --push --tag=fwilhe2/act-runner:latest-${{ matrix.variant }} .
+
+      - name: Image size (base)
+        if: ${{ matrix.variant == 'base' }}
+        run: |
+          BYTES=$(docker inspect -f "{{ .Size }}"  fwilhe2/act-runner:latest)
+          numfmt --to iec --format "%8.4f" $BYTES
+      - name: Image size (${{ matrix.variant }})
+        if: ${{ matrix.variant != 'base' }}
+        run: |
+          BYTES=$(docker inspect -f "{{ .Size }}"  fwilhe2/act-runner:latest-${{ matrix.variant }})
+          numfmt --to iec --format "%8.4f" $BYTES
