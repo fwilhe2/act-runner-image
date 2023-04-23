@@ -1,5 +1,4 @@
 #!/bin/bash
-set -x
 
 for variant in clang gcc java-tools rust; do
     sed 's|#%%TOOL_SCRIPTS%%|\&\& bash installers/'$variant'.sh \\|g' Dockerfile > Dockerfile.$variant
