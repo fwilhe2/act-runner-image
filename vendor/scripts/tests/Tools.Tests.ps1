@@ -79,13 +79,13 @@ Describe "Docker" {
     It "docker-credential-ecr-login" {
         "docker-credential-ecr-login -v" | Should -ReturnZeroExitCode
     }
+}
 
-    Context "docker images" {
-        $testCases = (Get-ToolsetContent).docker.images | ForEach-Object { @{ ImageName = $_ } }
+Describe "Docker images" {
+    $testCases = (Get-ToolsetContent).docker.images | ForEach-Object { @{ ImageName = $_ } }
 
-        It "<ImageName>" -TestCases $testCases {
-           sudo docker images "$ImageName" --format "{{.Repository}}" | Should -Not -BeNullOrEmpty
-        }
+    It "<ImageName>" -TestCases $testCases {
+       sudo docker images "$ImageName" --format "{{.Repository}}" | Should -Not -BeNullOrEmpty
     }
 }
 
@@ -280,19 +280,19 @@ Describe "Julia" {
 
 Describe "Kubernetes tools" {
     It "kind" {
-        "kind --version" | Should -ReturnZeroExitCode
+        "kind version" | Should -ReturnZeroExitCode
     }
 
     It "kubectl" {
-        "kubectl version" | Should -MatchCommandOutput "Client Version: version.Info"
+        "kubectl version --client=true" | Should -MatchCommandOutput "Client Version: v"
     }
 
     It "helm" {
-        "helm version" | Should -ReturnZeroExitCode
+        "helm version --short" | Should -ReturnZeroExitCode
     }
 
     It "minikube" {
-        "minikube version" | Should -ReturnZeroExitCode
+        "minikube version --short" | Should -ReturnZeroExitCode
     }
 
     It "kustomize" {
@@ -341,6 +341,12 @@ Describe "Containers" {
 
         "$ContainerCommand -v" | Should -ReturnZeroExitCode
     }
+
+    # https://github.com/actions/runner-images/issues/7753
+    It "podman networking" -TestCases "podman CNI plugins" {
+        "podman network create -d bridge test-net && podman network ls" | Should -Not -MatchCommandOutput "Error"
+    }
+
 }
 
 Describe "nvm" {

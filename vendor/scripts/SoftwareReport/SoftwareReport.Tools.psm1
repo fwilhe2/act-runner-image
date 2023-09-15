@@ -69,22 +69,22 @@ function Get-DockerComposeV1Version {
 }
 
 function Get-DockerComposeV2Version {
-    $composeVersion = docker compose version | Take-OutputPart -Part 3
+    $composeVersion = docker compose version | Take-OutputPart -Part 3 | Take-OutputPart -Part 0 -Delimiter "v"
     return $composeVersion
 }
 
-function Get-DockerMobyClientVersion {
+function Get-DockerClientVersion {
     $dockerClientVersion = sudo docker version --format '{{.Client.Version}}'
     return $dockerClientVersion
 }
 
-function Get-DockerMobyServerVersion {
+function Get-DockerServerVersion {
     $dockerServerVersion = sudo docker version --format '{{.Server.Version}}'
     return $dockerServerVersion
 }
 
 function Get-DockerBuildxVersion {
-    $buildxVersion = docker buildx version  | Take-OutputPart -Part 1 | Take-OutputPart -Part 0 -Delimiter "+"
+    $buildxVersion = docker buildx version  | Take-OutputPart -Part 1 | Take-OutputPart -Part 0 -Delimiter "v"
     return $buildxVersion
 }
 
@@ -182,9 +182,7 @@ function Get-NvmVersion {
 }
 
 function Get-PackerVersion {
-    # Packer 1.7.1 has a bug and outputs version to stderr instead of stdout https://github.com/hashicorp/packer/issues/10855
-    $result = (Get-CommandResult "packer --version").Output
-    $packerVersion = [regex]::matches($result, "(\d+.){2}\d+").Value
+    $packerVersion = packer --version
     return $packerVersion
 }
 

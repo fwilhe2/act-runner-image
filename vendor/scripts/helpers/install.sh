@@ -28,6 +28,7 @@ download_with_retries() {
         set +e
         http_code=$(eval $COMMAND)
         exit_code=$?
+        set -e
         if [ $http_code -eq 200 ] && [ $exit_code -eq 0 ]; then
             echo "Download completed"
             return 0
@@ -35,8 +36,6 @@ download_with_retries() {
             echo "Error — Either HTTP response code for '$URL' is wrong - '$http_code' or exit code is not 0 - '$exit_code'. Waiting $interval seconds before the next attempt, $retries attempts left"
             sleep $interval
         fi
-        # Enable exit on error back
-        set -e
     done
 
     echo "Could not download $URL"
@@ -73,7 +72,7 @@ get_github_package_download_url() {
     local VERSION=$3
     local SEARCH_IN_COUNT="100"
 
-    json=$(curl -s "https://api.github.com/repos/${REPO_ORG}/releases?per_page=${SEARCH_IN_COUNT}")
+    json=$(curl -fsSL "https://api.github.com/repos/${REPO_ORG}/releases?per_page=${SEARCH_IN_COUNT}")
 
     if [ -n "$VERSION" ]; then
         tagName=$(echo $json | jq -r '.[] | select(.prerelease==false).tag_name' | sort --unique --version-sort | egrep -v ".*-[a-z]|beta" | egrep "\w*${VERSION}" | tail -1)
