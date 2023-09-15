@@ -9,7 +9,13 @@
 source $HELPER_SCRIPTS/install.sh
 
 # Install GitHub CLI
-downloadUrl=$(get_github_package_download_url "cli/cli" "contains(\"linux\") and contains(\"amd64\") and contains(\".deb\")")
+if [ $(uname -m) = x86_64 ]
+then
+    downloadUrl=$(get_github_package_download_url "cli/cli" "contains(\"linux\") and contains(\"amd64\") and contains(\".deb\")")
+else
+    downloadUrl=$(get_github_package_download_url "cli/cli" "contains(\"linux\") and contains(\"arm64\") and contains(\".deb\")")
+fi
+
 download_with_retries $downloadUrl "/tmp"
 apt install /tmp/gh_*_linux_amd64.deb
 
