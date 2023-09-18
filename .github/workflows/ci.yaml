@@ -23,7 +23,7 @@ jobs:
       - run: curl -s https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash
       - run: ./test.sh ${{ matrix.variant }}
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
         id: buildx
         uses: docker/setup-buildx-action@v2
